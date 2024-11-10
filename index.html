@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Registration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      body::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18cm;
+        height: 18cm;
+        background: url('c:/Users/pawan/Desktop/logo1.jpg') center center/contain no-repeat;
+        opacity: 0.1;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+      }
+
+      input[type='number']::-webkit-inner-spin-button,
+      input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type='number'] {
+        -moz-appearance: textfield;
+      }
+
+      .container {
+        width: 350px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.4s ease;
+        position: relative;
+      }
+
+      .container::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: -15px;
+        right: -15px;
+        bottom: -15px;
+        border-radius: 15px;
+        background: linear-gradient(45deg, rgba(240, 147, 251, 0.5), rgba(79, 172, 254, 0.5));
+        z-index: -1;
+        filter: blur(25px);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+        font-weight: 700;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #555;
+      }
+
+      input[type='text'],
+      input[type='password'],
+      input[type='number'],
+      input[type='file'],
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        background-color: #fff;
+      }
+
+      input[type='text']:focus,
+      input[type='password']:focus,
+      input[type='number']:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #f093fb;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #f5576c;
+        background-image: linear-gradient(315deg, #f093fb 0%, #f5576c 74%);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #e94e77;
+        background-image: linear-gradient(315deg, #e94e77 0%, #f5576c 74%);
+      }
+
+      .toggle-link {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .toggle-link a {
+        color: #f63232;
+        text-decoration: none;
+      }
+
+      .toggle-link a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        opacity: 0;
+        transform: scale(0.95);
+        animation: fadeIn 0.8s forwards ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      #analytics-container {
+        display: none;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        padding: 20px;
+      }
+
+      .analytics-button {
+        margin-top: 15px;
+        background: linear-gradient(315deg, #f093fb 0%, #f5576c 74%);
+      }
+
+      .back-button {
+        margin-top: 15px;
+        padding: 20px;
+        background: linear-gradient(315deg, #808080 0%, #606060 74%) !important;
+      }
+
+      .chart-container {
+        width: 100%;
+        height: 300px;
+        margin-top: 20px;
+        position: relative;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      #analytics-ward-no {
+        width: 300px;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Login Form -->
+      <div id="login-form">
+        <h2>Login</h2>
+        <div class="form-group">
+          <label for="login-mobile">Mobile Number or aadhar</label>
+          <input type="number" id="login-mobile" placeholder="Enter Mobile or aadhar" />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter Password" />
+        </div>
+        <button onclick="login()">Login</button>
+        <div class="toggle-link">
+          <p>Don't have an account? <a href="#" onclick="toggleForms()">Register here</a></p>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-form" style="display: none">
+        <h2>Register</h2>
+        <div class="form-group">
+          <label for="register-mobile">Mobile Number</label>
+          <input type="number" id="register-mobile" placeholder="Enter Mobile Number" />
+        </div>
+        <div class="form-group">
+          <label for="register-aadhar">Aadhaar Number</label>
+          <input type="number" id="register-aadhar" placeholder="Enter aadhar Number" />
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" placeholder="Enter Password" />
+        </div>
+        <button onclick="register()">Register</button>
+        <div class="toggle-link">
+          <p>Already have an account? <a href="#" onclick="toggleForms()">Login here</a></p>
+        </div>
+      </div>
+
+      <!-- Submit Form -->
+      <div id="submit-form" style="display: none">
+        <h2>Submit Your Concern</h2>
+        <form id="concern-form" onsubmit="submitForm(event)">
+          <div class="form-group">
+            <div class="form-group">
+              <label for="ward-no">Select Your Ward Number</label>
+              <select id="ward-no"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="parameter-no">Parameter</label>
+            <select id="parameter-no">
+              <option value="" selected disabled>Select a parameter</option>
+              <option value="Health">Public Health and Sanitation</option>
+              <option value="Sanitation">Water Supply</option>
+              <option value="Public Infrastructure">Roads</option>
+              <option value="Water">Land and Construction</option>
+              <option value="Property Tax">Parks and Public Utility places</option>
+              <option value="Property Tax">Taxes</option>
+              <option value="Property Tax">UCD</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="model">Model</label>
+            <select id="model">
+              <option value="" selected disabled>Select a model</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Suggestion">Suggestion</option>
+              <option value="Opinion">Opinion</option>
+              <option value="Data Dashboards">Data Dashboards</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="concern-msg">Concern Message</label>
+            <textarea id="concern-msg" placeholder="Enter your concern"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="file">Attach Files/Pictures:</label>
+            <input type="file" id="file"></file>
+          </div>
+          <button type="submit">Submit</button>
+          <button type="button" class="analytics-button" onclick="showAnalytics()">
+            View Analytics
+          </button>
+        </form>
+      </div>
+
+      <div id="analytics-container">
+        <h2 class="header-container">
+          <div>Ward Analytics for</div>
+          <select id="analytics-ward-no" onchange="constructGraph()"></select>
+        </h2>
+        <div class="chart-container">
+          <canvas id="wardChart"></canvas>
+        </div>
+        <button class="back-button" onclick="hideAnalytics()">Back to Form</button>
+      </div>
+    </div>
+
+    <script>
+      let wardChart = null // Global variable to store chart instance
+      let apiData = null
+
+      function showAnalytics() {
+        document.getElementById('submit-form').style.display = 'none'
+        document.getElementById('analytics-container').style.display = 'flex'
+        document.querySelector('.container').style.width = '75vw'
+        populateWardDropdown('analytics-ward-no')
+        fetchAndDisplayAnalytics()
+      }
+
+      function hideAnalytics() {
+        document.getElementById('submit-form').style.display = 'block'
+        document.getElementById('analytics-container').style.display = 'none'
+        document.querySelector('.container').style.width = '350px'
+        if (wardChart) {
+          wardChart.destroy() // Clean up existing chart
+        }
+        document.getElementById('concern-form').reset()
+      }
+
+      // Function to filter data by ward and count parameterNos
+      function getParameterCountByWard(data, wardNo) {
+        const filteredData = data.filter((item) => item.wardNo == wardNo)
+        const paramCounts = {}
+
+        filteredData.forEach((item) => {
+          paramCounts[item.parameterNo] = (paramCounts[item.parameterNo] || 0) + 1
+        })
+
+        return paramCounts
+      }
+
+      const constructGraph = () => {
+        // Prepare data for Chart.js
+        const wardNo = document.getElementById('analytics-ward-no').value
+        const paramCounts = getParameterCountByWard(apiData, wardNo)
+
+        // Extract labels and data for the chart
+        const labels = Object.keys(paramCounts)
+        const counts = Object.values(paramCounts)
+
+        // Destroy existing chart if it exists
+        if (wardChart) {
+          wardChart.destroy()
+        }
+
+        // Create new chart
+        const ctx = document.getElementById('wardChart').getContext('2d')
+        wardChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `Count of Parameters for Ward ${wardNo}`,
+                data: counts,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Count'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Parameters'
+                }
+              }
+            }
+          }
+        })
+      }
+
+      async function fetchAndDisplayAnalytics() {
+        try {
+          const response = await fetch('https://know-your-ward-api.onrender.com/forms')
+          const data = await response.json()
+          apiData = data
+          document.getElementById('analytics-ward-no').value = document.getElementById(
+            'ward-no'
+          ).value
+          constructGraph()
+        } catch (error) {
+          console.error('Error fetching analytics:', error)
+          alert('Failed to load analytics data')
+        }
+      }
+
+      function populateWardDropdown(id) {
+        const wardSelect = document.getElementById(id)
+        for (let i = 1; i <= 96; i++) {
+          const option = document.createElement('option')
+          option.value = i
+          option.textContent = `Ward Number ${i}`
+          wardSelect.appendChild(option)
+        }
+      }
+
+      // Call the function to populate the dropdown
+      populateWardDropdown('ward-no')
+
+      function toggleForms() {
+        var loginForm = document.getElementById('login-form')
+        var registerForm = document.getElementById('register-form')
+        var submitForm = document.getElementById('submit-form')
+        if (loginForm.style.display === 'none') {
+          loginForm.style.display = 'block'
+          registerForm.style.display = 'none'
+          submitForm.style.display = 'none'
+        } else {
+          loginForm.style.display = 'none'
+          registerForm.style.display = 'block'
+          submitForm.style.display = 'none'
+        }
+      }
+
+      function login() {
+        var mobile = document.getElementById('login-mobile').value
+        var password = document.getElementById('login-password').value
+
+        if (mobile && password) {
+          fetch('https://know-your-ward-api.onrender.com/users/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              mobile: mobile,
+              password: password
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert('Login successful')
+              showSubmitForm() // Show submit form after login
+            })
+            .catch((error) => alert('Login failed!'))
+        } else {
+          alert('Please enter your Mobile/aadhar and Password.')
+        }
+      }
+
+      function register() {
+        var mobile = document.getElementById('register-mobile').value
+        var aadhar = document.getElementById('register-aadhar').value
+        var password = document.getElementById('register-password').value
+
+        if (mobile && aadhar && password) {
+          fetch('https://know-your-ward-api.onrender.com/users/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              mobile: mobile,
+              aadhar: aadhar,
+              password: password
+            })
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert('Registration successful')
+              showSubmitForm() // Show submit form after registration
+            })
+            .catch((error) => alert('Registration failed!'))
+        } else {
+          alert('Please fill all fields.')
+        }
+      }
+
+      function showSubmitForm() {
+        var loginForm = document.getElementById('login-form')
+        var registerForm = document.getElementById('register-form')
+        var submitForm = document.getElementById('submit-form')
+
+        loginForm.style.display = 'none' // Hide login form
+        registerForm.style.display = 'none' // Hide register form
+        submitForm.style.display = 'block' // Show submit form
+      }
+
+      async function submitForm(event) {
+        event.preventDefault()
+        const wardNo = document.getElementById('ward-no').value
+        const parameterNo = document.getElementById('parameter-no').value
+        const model = document.getElementById('model').value
+        const concernMsg = document.getElementById('concern-msg').value
+
+        // Check if all fields are filled
+        if (wardNo && parameterNo && model && concernMsg) {
+          const formData = {
+            wardNo,
+            parameterNo,
+            model,
+            concernMsg
+          }
+
+          try {
+            const response = await fetch('https://know-your-ward-api.onrender.com/forms', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(formData)
+            })
+
+            if (!response.ok) {
+              throw new Error('Failed to submit form')
+            }
+
+            const result = await response.json()
+            alert('Form submitted successfully: ' + result.message)
+            document.getElementById('concern-form').reset()
+          } catch (error) {
+            alert('Error: ' + error.message)
+          }
+        } else {
+          alert('Please fill in all fields.')
+        }
+      }
+    </script>
+  </body>
+</html>
