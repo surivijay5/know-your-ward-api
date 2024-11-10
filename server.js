@@ -1,7 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const app = express()
+// Enable CORS for all routes and origins
+app.use(cors())
+
 app.use(bodyParser.json())
 
 const users = []
